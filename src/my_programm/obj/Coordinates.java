@@ -5,12 +5,20 @@ public class Coordinates {
     private long y;
 
     public Coordinates(long x_c, long y_c) {
-        if (x_c > 136) {throw new Error("Максимальное значение X кооридинаты - 136");}
-        else if (x_c < 0) {throw new Error("Минимальное значение X кооридинаты - 0");}
+        if (x_c > 136) {throw new RuntimeException("Максимальное значение X кооридинаты - 136");}
+        else if (x_c < 0) {throw new RuntimeException("Минимальное значение X кооридинаты - 0");}
         else {x = x_c;}
 
-        if (y_c > 136) {throw new Error("Максимальное значение Y кооридинаты - 136");}
-        else if (y_c < 0) {throw new Error("Минимальное значение Y кооридинаты - 0");}
+        if (y_c > 136) {throw new RuntimeException("Максимальное значение Y кооридинаты - 136");}
+        else if (y_c < 0) {throw new RuntimeException("Минимальное значение Y кооридинаты - 0");}
         else {y = y_c;}
+    }
+
+    @Override
+    public String toString() {
+        return "Coordinates{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
     }
 }

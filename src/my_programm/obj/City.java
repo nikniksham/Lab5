@@ -18,11 +18,11 @@ public class City {
     private Human governor; //Поле может быть null
 
     public City(Integer id_p, String name_p, Coordinates coordinates_p, long area_p, Long population_p, int metersAboveSeaLevel_p, int carCode_p, Climate climate_p, StandardOfLiving standardOfLiving_p, Human governor_p) {
-//        if (name_p != null) {throw new Error("Имя города не должно быть null");}
-//        if (area_p < 1) {throw new Error("Площадь города должна быть больше 0");}
-//        if (population_p != null) {throw new Error("Население города не должно быть null");}
-//        if (population_p.longValue() < 1) {throw new Error("Население города должна быть больше 0");}
-//        if (carCode_p < 1 || carCode_p > 1000) {throw new Error("Код автомобиля должен быть в диапозоне [1; 1000]");}
+//        if (name_p != null) {throw new RuntimeException("Имя города не должно быть null");}
+//        if (area_p < 1) {throw new RuntimeException("Площадь города должна быть больше 0");}
+//        if (population_p != null) {throw new RuntimeException("Население города не должно быть null");}
+//        if (population_p.longValue() < 1) {throw new RuntimeException("Население города должна быть больше 0");}
+//        if (carCode_p < 1 || carCode_p > 1000) {throw new RuntimeException("Код автомобиля должен быть в диапозоне [1; 1000]");}
         this.id = id_p;
         this.name = name_p;
         this.coordinates = coordinates_p;
@@ -34,5 +34,22 @@ public class City {
         this.standardOfLiving = standardOfLiving_p;
         this.governor = governor_p;
         this.creationDate = Calendar.getInstance().getTime();
+    }
+
+    @Override
+    public String toString() {
+        return "City{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", coordinates=" + coordinates +
+                ", creationDate=" + creationDate +
+                ", area=" + area +
+                ", population=" + population +
+                ", metersAboveSeaLevel=" + metersAboveSeaLevel +
+                ", carCode=" + carCode +
+                ", climate=" + climate +
+                ", standardOfLiving=" + standardOfLiving +
+                ", governor=" + governor +
+                '}';
     }
 }
