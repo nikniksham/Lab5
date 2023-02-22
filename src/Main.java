@@ -1,8 +1,10 @@
 import my_programm.Manager;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class Main {
@@ -10,16 +12,46 @@ public class Main {
     private static Manager manager;
 
     public static void main(String[] args) {
+        boolean quest = false, cycle = true, exist = false;
         try {
-//            manager = new Manager("test.json");
-            manager = new Manager(args[0]);
+            manager = new Manager();
+            File f = new File("localsave.json");
+            if (f.exists() && !f.isDirectory()) {
+                System.out.println("У вас существует локальное сохранение, вы желаете его загрузить? [Y/n]");
+                exist = true;
+            }
             Scanner scanner = new Scanner(System.in);
             List<String> commands = new ArrayList<>();
-            String input;
-            while (!"no".equalsIgnoreCase(input = scanner.nextLine())) {
+//            String input = args[0];
+            String input = "test.json";
+
+            if (exist && scanner.nextLine().equalsIgnoreCase("y")) {
+                manager.setFile("localsave.json");
+                System.out.println("Данные восстановлены");
                 try {
+                    f.delete();
+                } catch (Exception e) {
+
+                }
+            } else {
+                manager.setFile(input);
+                System.out.println("Данные утеряны");
+            }
+
+            while (cycle) {
+                input = scanner.nextLine();
+                try {
+                    if (quest && input.equalsIgnoreCase("y")) {
+                        commands.add("exit");
+                        cycle = false;
+                    } else {
+                        quest = false;
+                    }
                     if (input.contains("execute_script ")) {
                         commands = manager.get_list_of_commands(input.split("\s")[1]);
+                    } else if (input.equals("exit")) {
+                        System.out.println("Вы уверены, что хотите выйти? Y/n");
+                        quest = true;
                     } else {
                         commands.add(input);
                     }
@@ -33,6 +65,12 @@ public class Main {
 //                    e.printStackTrace();
                     commands.clear();
                 }
+            }
+        } catch (NoSuchElementException e) {
+            try {
+                manager.save("localsave.json");
+            } catch (Exception e2) {
+                System.out.println(e2.toString());
             }
         } catch (Exception e) {
             System.out.println(e.toString());

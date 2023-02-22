@@ -17,10 +17,13 @@ public class Manager {
     private Integer id = 1;
     private java.util.Date dateIni;
     private Integer loc_id = null;
-    public Manager(String filename) throws IOException {
+    public Manager() {
+        dateIni = Calendar.getInstance().getTime();
+    }
+
+    public void setFile(String filename) throws IOException {
         List<String> stroki = CustomFileReader.readFile(filename);
         createCitiesFromJson(stroki);
-        dateIni = Calendar.getInstance().getTime();
     }
 
     public void help() {
@@ -321,6 +324,7 @@ public class Manager {
         strings.add("}");
 
         CustomFileWriter.writeString(filename, strings);
+        System.out.println("Данные сохранены в файл " + filename);
     }
 
     private City createNewCity(Scanner scanner) {
