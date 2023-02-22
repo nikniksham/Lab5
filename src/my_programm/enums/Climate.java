@@ -17,4 +17,15 @@ public enum Climate {
             default: throw new RuntimeException("Тип климата может быть от 1 до 5");
         }
     }
+
+    public static int getIdByName(Climate climate) {
+        switch (climate) {
+            case TROPICAL_SAVANNA: return 1;
+            case HUMIDSUBTROPICAL: return 2;
+            case STEPPE: return 3;
+            case SUBARCTIC: return 4;
+            case DESERT: return 5;
+            default: return 0;
+        }
+    }
 }

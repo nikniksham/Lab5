@@ -1,5 +1,7 @@
 package my_programm.obj;
 
+import java.time.ZonedDateTime;
+
 public class Human {
     private java.time.ZonedDateTime birthday;
     private String name;
@@ -12,5 +14,13 @@ public class Human {
     @Override
     public String toString() {
         return "Его высочество: " +name + " родился: " + birthday;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public ZonedDateTime getBirthday() {
+        return birthday;
     }
 }

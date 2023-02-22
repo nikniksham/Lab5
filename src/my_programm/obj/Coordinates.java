@@ -21,4 +21,12 @@ public class Coordinates {
                 ", y=" + y +
                 '}';
     }
+
+    public long getX() {
+        return x;
+    }
+
+    public long getY() {
+        return y;
+    }
 }

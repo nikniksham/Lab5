@@ -60,7 +60,7 @@ public class City {
         return name;
     }
 
-    public void setName(String name) {
+    private void setName(String name) {
         this.name = name;
     }
 
@@ -68,7 +68,7 @@ public class City {
         return coordinates;
     }
 
-    public void setCoordinates(Coordinates coordinates) {
+    private void setCoordinates(Coordinates coordinates) {
         this.coordinates = coordinates;
     }
 
@@ -76,7 +76,7 @@ public class City {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
+    private void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
 
@@ -84,7 +84,7 @@ public class City {
         return area;
     }
 
-    public void setArea(long area) {
+    private void setArea(long area) {
         this.area = area;
     }
 
@@ -92,7 +92,7 @@ public class City {
         return population;
     }
 
-    public void setPopulation(Long population) {
+    private void setPopulation(Long population) {
         this.population = population;
     }
 
@@ -100,7 +100,7 @@ public class City {
         return metersAboveSeaLevel;
     }
 
-    public void setMetersAboveSeaLevel(Integer metersAboveSeaLevel) {
+    private void setMetersAboveSeaLevel(Integer metersAboveSeaLevel) {
         this.metersAboveSeaLevel = metersAboveSeaLevel;
     }
 
@@ -108,7 +108,7 @@ public class City {
         return carCode;
     }
 
-    public void setCarCode(int carCode) {
+    private void setCarCode(int carCode) {
         this.carCode = carCode;
     }
 
@@ -116,7 +116,7 @@ public class City {
         return climate;
     }
 
-    public void setClimate(Climate climate) {
+    private void setClimate(Climate climate) {
         this.climate = climate;
     }
 
@@ -124,7 +124,7 @@ public class City {
         return standardOfLiving;
     }
 
-    public void setStandardOfLiving(StandardOfLiving standardOfLiving) {
+    private void setStandardOfLiving(StandardOfLiving standardOfLiving) {
         this.standardOfLiving = standardOfLiving;
     }
 
@@ -132,7 +132,7 @@ public class City {
         return governor;
     }
 
-    public void setGovernor(Human governor) {
+    private void setGovernor(Human governor) {
         this.governor = governor;
     }
 }

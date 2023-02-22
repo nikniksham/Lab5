@@ -18,7 +18,7 @@ public class Manager {
     private java.util.Date dateIni;
     private Integer loc_id = null;
     public Manager(String filename) throws IOException {
-        List<String> stroki =  CustomFileReader.readFile(filename);
+        List<String> stroki = CustomFileReader.readFile(filename);
         createCitiesFromJson(stroki);
         dateIni = Calendar.getInstance().getTime();
     }
@@ -31,8 +31,8 @@ public class Manager {
                            "update {id} {element} : откроет меню создания нового элемента, для замены старого по id\n" +
                            "remove_key {id} : удалить элемент из коллекции по его ключу\n" +
                            "clear : очистить коллекцию\n" +
-                           "save : сохранить коллекцию в файл\n" +
-                           "execute_script file_name : считать и исполнить скрипт из указанного файла. В скрипте содержатся команды в таком же виде, в котором их вводит пользователь в интерактивном режиме.\n" +
+                           "save {filename} : сохранить коллекцию в файл\n" +
+                           "execute_script {filename} : считать и исполнить скрипт из указанного файла. В скрипте содержатся команды в таком же виде, в котором их вводит пользователь в интерактивном режиме.\n" +
                            "exit : завершить программу (без сохранения в файл)\n" +
                            "remove_lower {element}: удалить из коллекции все элементы, меньшие чем заданный\n" +
                            "replace_if_lower {id} {element} : заменить значение по ключу, если новое созданное значение меньше старого (по выбранному параметру)\n" +
@@ -40,6 +40,7 @@ public class Manager {
                            "sum_of_meters_above_sea_level : вывести сумму значений поля metersAboveSeaLevel для всех элементов коллекции\n" +
                            "print_unique_climate : вывести уникальные значения поля climate всех элементов в коллекции\n" +
                            "print_field_descending_governor : вывести значения поля governor всех элементов в порядке убывания\n" +
+                           "*Под {filename} подразумевается название файла\n" +
                            "*Под {id} подразумевается id города в таблице\n" +
                            "*Под {element} подразумевается {name [x y] area population MASL carCode [null/1-5] [null/1-5] [null/year month day name_gov]}");
     }
@@ -194,6 +195,10 @@ public class Manager {
         }
     }
 
+    public List<String> get_list_of_commands(String filename) throws IOException {
+        return CustomFileReader.readFile(filename);
+    }
+
     private City create_city_by_string(String string) {
 //         {name [x y] area population MASL carCode [null/1-5] [null/1-5] [null/year month day name_gov]}
         boolean climate_is_set = false, level_is_set = false;
@@ -264,6 +269,60 @@ public class Manager {
         return city;
     }
 
+    public void save(String filename) throws IOException {
+        ArrayList<String> strings = new ArrayList<>();
+        strings.add("{");
+        strings.add("  \"city\": [");
+        ArrayList<City> cities = new ArrayList<>();
+        for (Map.Entry<Integer,City> entry : table.entrySet()) {
+            cities.add(entry.getValue());
+        }
+        for (int i = cities.size() - 1; i > -1; --i) {
+            City city = cities.get(i);
+            strings.add("    {");
+            strings.add("      \"name\": " + '"' + city.getName() + "\",");
+            strings.add("      \"coordinates\": [");
+            strings.add("        "+city.getCoordinates().getX()+",");
+            strings.add("        "+city.getCoordinates().getY());
+            strings.add("      ],");
+            strings.add("      \"area\": " + city.getArea() + ",");
+            strings.add("      \"population\": " + city.getPopulation() + ",");
+            strings.add("      \"metersAboveSeaLevel\": " + city.getMetersAboveSeaLevel() + ",");
+            strings.add("      \"carCode\": " + city.getCarCode() + ",");
+            if (city.getClimate() != null) {
+                strings.add("      \"Climate\": " + Climate.getIdByName(city.getClimate()) + ",");
+            } else {
+                strings.add("      \"Climate\": " + null + ",");
+            }
+            if (city.getStandardOfLiving() != null) {
+                strings.add("      \"StandardOfLiving\": " + StandardOfLiving.getIdByName(city.getStandardOfLiving()) + ",");
+            } else {
+                strings.add("      \"StandardOfLiving\": " + null + ",");
+            }
+            if (city.getGovernor() != null) {
+                strings.add("      \"Governor\": [");
+                strings.add("        [");
+                strings.add("          "+city.getGovernor().getBirthday().getYear()+",");
+                strings.add("          "+city.getGovernor().getBirthday().getMonthValue()+",");
+                strings.add("          "+city.getGovernor().getBirthday().getDayOfMonth());
+                strings.add("        ],");
+                strings.add("        \""+city.getGovernor().getName()+"\"");
+                strings.add("      ]");
+            } else {
+                strings.add("      \"Governor\": " + null);
+            }
+            if (i == 0) {
+                strings.add("    }");
+            } else {
+                strings.add("    },");
+            }
+        }
+        strings.add("  ]");
+        strings.add("}");
+
+        CustomFileWriter.writeString(filename, strings);
+    }
+
     private City createNewCity(Scanner scanner) {
         System.out.println("Как город обзывается?");
         String name = scanner.nextLine();
@@ -313,7 +372,7 @@ public class Manager {
     }
 
     private void createCitiesFromJson(List<String> stroki) {
-        boolean start_create_city = false, past_city = false, start_coordinates = false, start_governor = false, start_governor_birthdate = false;
+        boolean start_create_city = false, past_city = false, start_coordinates = false, start_governor = false, start_governor_birthdate = false, can_create_new = true;
         String name = null, gov_name = null;
         Coordinates coordinates = null;
         Long area = null, population = null;
@@ -325,6 +384,7 @@ public class Manager {
             if (!past_city) {if (s.contains("\"city\": [")) {past_city = true;}}
             else if (s.contains("{")) {
                 start_create_city = true;
+                can_create_new = true;
                 start_coordinates = false; start_governor = false; start_governor_birthdate = false;
                 name = null; gov_name = null;
                 coordinates = null;
@@ -334,11 +394,14 @@ public class Manager {
                 standardOfLiving = null;
                 gover = null;
             }
-            else if (s.contains("}")) {
+            else if (s.contains("}") && can_create_new) {
                 start_create_city = false;
-                City city = new City(id, name, coordinates, area, population, MASL, carCode, climate, standardOfLiving, gover);
-                this.table.put(id, city);
-                id++;
+                can_create_new = false;
+                if (area != null && MASL != null && carCode != null) {
+                    City city = new City(id, name, coordinates, area, population, MASL, carCode, climate, standardOfLiving, gover);
+                    this.table.put(id, city);
+                    id++;
+                }
             }
             if (start_create_city) {
                 if (start_coordinates) {
@@ -374,11 +437,17 @@ public class Manager {
                 } else if (s.contains("\"carCode\":")) {
                     carCode = Pomogtor.StringToInteger(s.split("\":")[1]);
                 } else if (s.contains("\"Climate\":")) {
-                    climate = Climate.getById(Pomogtor.StringToInt(s.split("\":")[1]));
+                    if (!s.split("\":")[1].replace(",", "").strip().equals("null")) {
+                        climate = Climate.getById(Pomogtor.StringToInt(s.split("\":")[1]));
+                    }
                 } else if (s.contains("\"StandardOfLiving\":")) {
-                    standardOfLiving = StandardOfLiving.getById(Pomogtor.StringToInt(s.split("\":")[1]));
+                    if (!s.split("\":")[1].replace(",", "").strip().equals("null")) {
+                        standardOfLiving = StandardOfLiving.getById(Pomogtor.StringToInt(s.split("\":")[1]));
+                    }
                 } else if (s.contains("\"Governor\":")) {
-                    start_governor = true;
+                    if (!s.split("\":")[1].replace(",", "").strip().equals("null")) {
+                        start_governor = true;
+                    }
                 }
             }
 //            System.out.println(s);
