@@ -1,2 +1,3 @@
 info
-execute_script test.txt
+insert 9 {"Город", [10, 20], 12, 14, 12, 5, 1, 2, null}
+info

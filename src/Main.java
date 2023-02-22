@@ -1,7 +1,6 @@
 import my_programm.Manager;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -25,7 +24,7 @@ public class Main {
             List<String> locarr = new ArrayList<>();
 
 //            String input = args[0];
-            String input = "test3.json";
+            String input = "hh.json";
 
             if (exist && scanner.nextLine().equalsIgnoreCase("y")) {
                 manager.setFile("localsave.json");

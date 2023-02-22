@@ -16,6 +16,7 @@ public class Manager {
     private Integer id = 1;
     private java.util.Date dateIni;
     private Integer loc_id = null;
+    private boolean change_something = false;
     public Manager() {
         dateIni = Calendar.getInstance().getTime();
     }
@@ -146,6 +147,7 @@ public class Manager {
     }
 
     public void remove_key(String sid) {
+        change_something = true;
         int id = Pomogtor.StringToInt(sid);
         if (table.containsKey(id)) {
             table.remove(id);
@@ -164,6 +166,7 @@ public class Manager {
             table.replace(id, this.create_city_by_string(string));
             loc_id = null;
             System.out.println("Новое значение задано");
+            change_something = true;
         }
     }
 
@@ -186,6 +189,7 @@ public class Manager {
                 }
             }
             System.out.println("Все лишние города удалены");
+            change_something = true;
         }
     }
 
@@ -201,6 +205,7 @@ public class Manager {
             if (old_city.get_num_for_srav() > new_city.get_num_for_srav()) {
                 table.replace(id, new_city);
                 System.out.println("Город заменён");
+                change_something = true;
                 return;
             }
             System.out.println("Город не заменён");
@@ -219,6 +224,7 @@ public class Manager {
             }
         }
         System.out.println("Всё слишком большое удалено");
+        change_something = true;
     }
 
     public void sum_of_meters_above_sea_level() {
