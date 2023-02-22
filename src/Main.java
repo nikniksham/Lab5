@@ -11,8 +11,8 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            manager = new Manager("test.json");
-//            manager = new Manager(args[0]);
+//            manager = new Manager("test.json");
+            manager = new Manager(args[0]);
             Scanner scanner = new Scanner(System.in);
             List<String> commands = new ArrayList<>();
             String input;
@@ -36,7 +36,7 @@ public class Main {
             }
         } catch (Exception e) {
             System.out.println(e.toString());
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 
@@ -71,9 +71,8 @@ public class Main {
             manager.print_field_descending_governor();
         } else if (input.contains("save ")) {
             manager.save(input.split("\s")[1]);
+        } else {
+            System.out.println("Я не знаю команды " + input + ", для справки по командам напишите help");
         }
-//        else {
-//            System.out.println("Я не знаю команды " + input + ", для справки по командам напишите help");
-//        }
     }
 }
