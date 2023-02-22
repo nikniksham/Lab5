@@ -11,9 +11,6 @@ public class Human {
 
     @Override
     public String toString() {
-        return "Human{" +
-                "birthday=" + birthday +
-                ", name='" + name + '\'' +
-                '}';
+        return "Его высочество: " +name + " родился: " + birthday;
     }
 }
