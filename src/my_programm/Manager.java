@@ -5,7 +5,6 @@ import my_programm.enums.StandardOfLiving;
 import my_programm.obj.City;
 import my_programm.obj.Coordinates;
 import my_programm.obj.Human;
-import org.w3c.dom.ls.LSOutput;
 
 import java.io.IOException;
 import java.time.ZoneId;
@@ -26,11 +25,51 @@ public class Manager {
         createCitiesFromJson(stroki);
     }
 
+    public List<String> commandHandler(String input) throws IOException {
+        List<String> arr = new ArrayList<>();
+        if (input.equals("help")) {
+            this.help();
+        } else if (input.equals("info")) {
+            this.info();
+        } else if (input.equals("show")) {
+            this.show();
+        } else if (input.equals("clear")) {
+            this.clear();
+        } else if (input.contains("insert ")) {
+            this.insert_id(input.split("\s")[1], input.substring(input.indexOf("{")));
+        } else if (input.contains("remove_key ")) {
+            this.remove_key(input.split("\s")[1]);
+        } else if (input.equals("exit")) {
+            System.exit(0);
+        } else if (input.equals("print_unique_climate")) {
+            this.print_unique_climate();
+        } else if (input.contains("update ")) {
+            this.update_id(input.split("\s")[1], input.substring(input.indexOf("{")));
+        } else if (input.contains("remove_lower ")) {
+            this.remove_lower(input.split("\s")[1]);
+        } else if (input.contains("replace_if_lower ")) {
+            this.replace_if_lower(input.split("\s")[1], input.substring(input.indexOf("{")));
+        } else if (input.contains("remove_greater_key ")) {
+            this.remove_greater_key(input.split("\s")[1]);
+        } else if (input.equals("sum_of_meters_above_sea_level")) {
+            this.sum_of_meters_above_sea_level();
+        } else if (input.equals("print_field_descending_governor")) {
+            this.print_field_descending_governor();
+        } else if (input.contains("save ")) {
+            this.save(input.split("\s")[1]);
+        } else if (input.contains("execute_script ")) {
+            return this.get_list_of_commands(input.split("\s")[1]);
+        } else {
+            System.out.println("Я не знаю команды " + input + ", для справки по командам напишите help");
+        }
+        return arr;
+    }
+
     public void help() {
         System.out.println("help : вывести справку по доступным командам\n" +
                            "info : вывести в стандартный поток вывода информацию о коллекции (тип, дата инициализации, количество элементов и т.д.)\n" +
                            "show : вывести в стандартный поток вывода все элементы коллекции в строковом представлении\n" +
-                           "insert {id} {element} : откроет меню создания нового элемента с заданным ключом\n" +
+                           "insert {id} {element} : создаст новый элемент с заданными параметрами\n" +
                            "update {id} {element} : откроет меню создания нового элемента, для замены старого по id\n" +
                            "remove_key {id} : удалить элемент из коллекции по его ключу\n" +
                            "clear : очистить коллекцию\n" +
@@ -45,7 +84,7 @@ public class Manager {
                            "print_field_descending_governor : вывести значения поля governor всех элементов в порядке убывания\n" +
                            "*Под {filename} подразумевается название файла\n" +
                            "*Под {id} подразумевается id города в таблице\n" +
-                           "*Под {element} подразумевается {name [x y] area population MASL carCode [null/1-5] [null/1-5] [null/year month day name_gov]}");
+                           "*Под {element} подразумевается {<String>name, [<Integer>x, <Integer>y] <Long>area, <Long>population, <Integer>MASL, <Integer>carCode, <Integer>[null/1-5], <Integer>[null/1-5], [null/<Integer>year, <Integer>month, <Integer>day, <String>name_gov]}");
     }
 
     public void info() {
@@ -83,9 +122,11 @@ public class Manager {
         } else if (table.containsKey(id)) {
             throw new RuntimeException("Этот id уже занят");
         } else {
-            table.put(id++, this.create_city_by_string(element));
-            this.id = id;
-            System.out.println("Новый город добавлен");
+            loc_id = id;
+            table.put(loc_id++, this.create_city_by_string(element));
+            this.id = loc_id;
+            loc_id = null;
+            System.out.println("Новый город добавлен " + id);
         }
     }
 
@@ -213,8 +254,8 @@ public class Manager {
         StandardOfLiving standardOfLiving = null;
         Human gover = null;
         ArrayList<String> stt = new ArrayList<>();
-        for (String s : string.strip().replace("{", "").replace("}", "").split(" ")) {
-            stt.add(Pomogtor.StringToString(s, new String []{"[", "]"}));
+        for (String s : string.strip().replace("{", "").replace("}", "").split(",\s")) {
+            stt.add(Pomogtor.StringToString(s, new String[]{"[", "]"}));
         }
         String s;
         for (int i = 0; i < stt.size(); ++i) {
@@ -267,8 +308,14 @@ public class Manager {
                 }
             }
         }
-        City city = new City(id, name, coordinates, area, population, MASL, carCode, climate, standardOfLiving, gover);
+        City city;
+        if (loc_id != null) {
+            city = new City(loc_id, name, coordinates, area, population, MASL, carCode, climate, standardOfLiving, gover);
+        } else {
+            city = new City(id, name, coordinates, area, population, MASL, carCode, climate, standardOfLiving, gover);
+        }
         id++;
+//        System.out.println(city);
         return city;
     }
 
@@ -283,7 +330,7 @@ public class Manager {
         for (int i = cities.size() - 1; i > -1; --i) {
             City city = cities.get(i);
             strings.add("    {");
-            strings.add("      \"name\": " + '"' + city.getName() + "\",");
+            strings.add("      \"name\": " + '"' + city.getName().replace("\"", "'").replace("\\", "/") + "\",");
             strings.add("      \"coordinates\": [");
             strings.add("        "+city.getCoordinates().getX()+",");
             strings.add("        "+city.getCoordinates().getY());

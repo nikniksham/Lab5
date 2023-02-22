@@ -22,20 +22,24 @@ public class Main {
             }
             Scanner scanner = new Scanner(System.in);
             List<String> commands = new ArrayList<>();
+            List<String> locarr = new ArrayList<>();
+
 //            String input = args[0];
-            String input = "test.json";
+            String input = "test3.json";
 
             if (exist && scanner.nextLine().equalsIgnoreCase("y")) {
                 manager.setFile("localsave.json");
                 System.out.println("Данные восстановлены");
-                try {
-                    f.delete();
-                } catch (Exception e) {
-
-                }
             } else {
                 manager.setFile(input);
-                System.out.println("Данные утеряны");
+                if (exist) {
+                    System.out.println("Данные утеряны");
+                }
+            }
+            try {
+                f.delete();
+            } catch (Exception e) {
+
             }
 
             while (cycle) {
@@ -47,23 +51,35 @@ public class Main {
                     } else {
                         quest = false;
                     }
-                    if (input.contains("execute_script ")) {
-                        commands = manager.get_list_of_commands(input.split("\s")[1]);
-                    } else if (input.equals("exit")) {
+                    if (input.equals("exit")) {
                         System.out.println("Вы уверены, что хотите выйти? Y/n");
                         quest = true;
                     } else {
                         commands.add(input);
                     }
-
-                    for (String s: commands) {
-                        execute_command(s.strip());
+                    int count = 0;
+                    while (commands.size() > 0) {
+                        for (String s : commands) {
+                            for (String str : manager.commandHandler(s.strip())) {
+                                locarr.add(str);
+                            }
+                        }
+                        commands.clear();
+                        for (String s : locarr) {
+                            commands.add(s);
+                        }
+                        locarr.clear();
+                        count++;
+                        if (count > 200) {
+                            throw new RuntimeException("Слишком многочисленный вызов исполняемых файлов в автоматическом режиме");
+                        }
                     }
                     commands.clear();
                 } catch (Exception e) {
                     System.out.println(e.toString());
 //                    e.printStackTrace();
                     commands.clear();
+                    locarr.clear();
                 }
             }
         } catch (NoSuchElementException e) {
@@ -75,42 +91,6 @@ public class Main {
         } catch (Exception e) {
             System.out.println(e.toString());
 //            e.printStackTrace();
-        }
-    }
-
-    private static void execute_command(String input) throws IOException { // {Новгород [15 23] 125500 522000 301 51 [null] [null] [null]}
-        if (input.equals("help")) {
-            manager.help();
-        } else if (input.equals("info")) {
-            manager.info();
-        } else if (input.equals("show")) {
-            manager.show();
-        } else if (input.equals("clear")) {
-            manager.clear();
-        } else if (input.contains("insert ")) {
-            manager.insert_id(input.split("\s")[1], input.substring(input.indexOf("{")));
-        } else if (input.contains("remove_key ")) {
-            manager.remove_key(input.split("\s")[1]);
-        } else if (input.equals("exit")) {
-            System.exit(0);
-        } else if (input.equals("print_unique_climate")) {
-            manager.print_unique_climate();
-        } else if (input.contains("update ")) {
-            manager.update_id(input.split("\s")[1], input.substring(input.indexOf("{")));
-        } else if (input.contains("remove_lower ")) {
-            manager.remove_lower(input.split("\s")[1]);
-        } else if (input.contains("replace_if_lower ")) {
-            manager.replace_if_lower(input.split("\s")[1], input.substring(input.indexOf("{")));
-        } else if (input.contains("remove_greater_key ")) {
-            manager.remove_greater_key(input.split("\s")[1]);
-        } else if (input.equals("sum_of_meters_above_sea_level")) {
-            manager.sum_of_meters_above_sea_level();
-        } else if (input.equals("print_field_descending_governor")) {
-            manager.print_field_descending_governor();
-        } else if (input.contains("save ")) {
-            manager.save(input.split("\s")[1]);
-        } else {
-            System.out.println("Я не знаю команды " + input + ", для справки по командам напишите help");
         }
     }
 }
