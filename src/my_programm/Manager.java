@@ -17,6 +17,7 @@ public class Manager {
     private java.util.Date dateIni;
     private Integer loc_id = null;
     private boolean change_something = false;
+    private boolean isFirst = true;
     public Manager() {
         dateIni = Calendar.getInstance().getTime();
     }
@@ -24,6 +25,12 @@ public class Manager {
     public void setFile(String filename) throws IOException {
         List<String> stroki = CustomFileReader.readFile(filename);
         createCitiesFromJson(stroki);
+        if (isFirst) {
+            isFirst = false;
+        } else {
+            change_something = true;
+            System.out.println("Таблица загружена");
+        }
     }
 
     public List<String> commandHandler(String input) throws IOException {
@@ -60,6 +67,9 @@ public class Manager {
             this.save(input.split("\s")[1]);
         } else if (input.contains("execute_script ")) {
             return this.get_list_of_commands(input.split("\s")[1]);
+        } else if (input.contains("load_new_table ")) {
+            this.clear();
+            this.setFile(input.split("\s")[1]);
         } else {
             System.out.println("Я не знаю команды " + input + ", для справки по командам напишите help");
         }
@@ -70,6 +80,7 @@ public class Manager {
         System.out.println("help : вывести справку по доступным командам\n" +
                            "info : вывести в стандартный поток вывода информацию о коллекции (тип, дата инициализации, количество элементов и т.д.)\n" +
                            "show : вывести в стандартный поток вывода все элементы коллекции в строковом представлении\n" +
+                           "load_new_table {filename} : вывести в стандартный поток вывода все элементы коллекции в строковом представлении\n" +
                            "insert {id} {element} : создаст новый элемент с заданными параметрами\n" +
                            "update {id} {element} : откроет меню создания нового элемента, для замены старого по id\n" +
                            "remove_key {id} : удалить элемент из коллекции по его ключу\n" +
@@ -509,6 +520,10 @@ public class Manager {
             }
 //            System.out.println(s);
         }
+    }
+
+    public boolean isChange_something() {
+        return change_something;
     }
 }
 

@@ -24,21 +24,22 @@ public class Main {
             List<String> locarr = new ArrayList<>();
 
 //            String input = args[0];
-            String input = "hh.json";
+            String input = "test.json";
 
-            if (exist && scanner.nextLine().equalsIgnoreCase("y")) {
-                manager.setFile("localsave.json");
-                System.out.println("Данные восстановлены");
+            if (exist) {
+                if (scanner.nextLine().equalsIgnoreCase("y")) {
+                    manager.setFile("localsave.json");
+                    System.out.println("Данные восстановлены");
+                } else {
+                    System.out.println("Данные утеряны(");
+                }
+                try {
+                    f.delete();
+                } catch (Exception e) {
+                    System.out.println(e.toString());
+                }
             } else {
                 manager.setFile(input);
-                if (exist) {
-                    System.out.println("Данные утеряны");
-                }
-            }
-            try {
-                f.delete();
-            } catch (Exception e) {
-
             }
 
             while (cycle) {
@@ -83,7 +84,9 @@ public class Main {
             }
         } catch (NoSuchElementException e) {
             try {
-                manager.save("localsave.json");
+                if (manager.isChange_something()) {
+                    manager.save("localsave.json");
+                }
             } catch (Exception e2) {
                 System.out.println(e2.toString());
             }
