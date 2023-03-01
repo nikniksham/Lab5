@@ -22,10 +22,10 @@ public class Manager {
         dateIni = Calendar.getInstance().getTime();
     }
 
-    public void setFile(String filename) throws IOException {
+    public void setFile(String filename, boolean f_isFirst) throws IOException {
         List<String> stroki = CustomFileReader.readFile(filename);
         createCitiesFromJson(stroki);
-        if (isFirst) {
+        if (isFirst && f_isFirst) {
             isFirst = false;
         } else {
             change_something = true;
@@ -69,7 +69,7 @@ public class Manager {
             return this.get_list_of_commands(input.split("\s")[1]);
         } else if (input.contains("load_new_table ")) {
             this.clear();
-            this.setFile(input.split("\s")[1]);
+            this.setFile(input.split("\s")[1], false);
         } else {
             System.out.println("Я не знаю команды " + input + ", для справки по командам напишите help");
         }
@@ -125,6 +125,7 @@ public class Manager {
         table.clear();
         System.out.println("Таблица очищена");
         this.id = 1;
+        change_something = true;
     }
 
     public void insert_id(String sid, String element) {
@@ -139,6 +140,7 @@ public class Manager {
             this.id = loc_id;
             loc_id = null;
             System.out.println("Новый город добавлен " + id);
+            change_something = true;
         }
     }
 
@@ -158,11 +160,11 @@ public class Manager {
     }
 
     public void remove_key(String sid) {
-        change_something = true;
         int id = Pomogtor.StringToInt(sid);
         if (table.containsKey(id)) {
             table.remove(id);
             System.out.println("Город удалён");
+            change_something = true;
         } else {
             System.out.println("Не найден город с таким id");
         }
@@ -389,6 +391,7 @@ public class Manager {
 
         CustomFileWriter.writeString(filename, strings);
         System.out.println("Данные сохранены в файл " + filename);
+        change_something = false;
     }
 
     private City createNewCity(Scanner scanner) {

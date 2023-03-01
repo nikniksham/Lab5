@@ -23,12 +23,12 @@ public class Main {
             List<String> commands = new ArrayList<>();
             List<String> locarr = new ArrayList<>();
 
-//            String input = args[0];
-            String input = "test.json";
+            String input = args[0];
+//            String input = "test.json";
 
             if (exist) {
                 if (scanner.nextLine().equalsIgnoreCase("y")) {
-                    manager.setFile("localsave.json");
+                    manager.setFile("localsave.json", false);
                     System.out.println("Данные восстановлены");
                 } else {
                     System.out.println("Данные утеряны(");
@@ -39,7 +39,7 @@ public class Main {
                     System.out.println(e.toString());
                 }
             } else {
-                manager.setFile(input);
+                manager.setFile(input, true);
             }
 
             while (cycle) {
