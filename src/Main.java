@@ -60,14 +60,10 @@ public class Main {
                     int count = 0;
                     while (commands.size() > 0) {
                         for (String s : commands) {
-                            for (String str : manager.commandHandler(s.strip())) {
-                                locarr.add(str);
-                            }
+                            locarr.addAll(manager.commandHandler(s.strip()));
                         }
                         commands.clear();
-                        for (String s : locarr) {
-                            commands.add(s);
-                        }
+                        commands.addAll(locarr);
                         locarr.clear();
                         count++;
                         if (count > 200) {
